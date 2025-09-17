@@ -1,6 +1,5 @@
-// context/AuthContext.jsx (enhanced version)
+// context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -17,28 +16,21 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
     const token = localStorage.getItem('token');
-    if (token) {
+    const userData = localStorage.getItem('userData');
+    
+    if (token && userData) {
       try {
-        // For a real app, you'd verify the token with the backend
-        // For now, we'll store basic user info in localStorage
-        const userData = localStorage.getItem('userData');
-        if (userData) {
-          setUser(JSON.parse(userData));
-        }
+        setUser(JSON.parse(userData));
       } catch (error) {
-        console.error('Auth check failed:', error);
+        console.error('Error parsing user data:', error);
         logout();
       }
     }
     setLoading(false);
-  };
+  }, []);
 
-  const login = async (token, userData) => {
+  const login = (token, userData) => {
     localStorage.setItem('token', token);
     localStorage.setItem('userData', JSON.stringify(userData));
     setUser(userData);

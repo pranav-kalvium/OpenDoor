@@ -1,10 +1,8 @@
 // components/PremiumLayout.jsx
 import React from 'react';
 import { Box } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
+import { MotionBox } from '../utils/motion'; // Update import
 
-// Create motion components using motion.element syntax
-const MotionBox = motion(Box);
 
 const PremiumLayout = ({ children }) => {
   return (

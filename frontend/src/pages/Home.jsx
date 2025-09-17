@@ -2,18 +2,12 @@
 import React from 'react';
 import { 
   Container, VStack, Heading, Text, Button, Box, 
-  SimpleGrid, Stat, StatLabel, StatNumber, Icon,
-  useBreakpointValue 
+  SimpleGrid, Icon, useBreakpointValue, Stat
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { MotionBox, MotionHeading, MotionText } from '../utils/motion';
 import { MapPin, Calendar, Users, Star } from 'lucide-react';
 import PremiumLayout from '../components/PremiumLayout';
-
-// Create motion components
-const MotionBox = motion(Box);
-const MotionHeading = motion(Heading);
-const MotionText = motion(Text);
 
 const Home = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -136,7 +130,7 @@ const Home = () => {
   );
 };
 
-// Animated Stat Card Component
+// Stat Card Component
 const StatCard = ({ icon, number, label, delay }) => (
   <MotionBox
     initial={{ opacity: 0, y: 50 }}
@@ -151,17 +145,17 @@ const StatCard = ({ icon, number, label, delay }) => (
     _hover={{
       transform: 'translateY(-8px)',
       borderColor: 'premium.primary',
-      boxShadow: '0 20px 40px rgba(99, 102, 241, 0.15)'
+      boxShadow: '0 20px 40px rgba(99, 102, 241, 0.15)',
+      transition: 'all 0.3s ease-in-out'
     }}
-    transition="all 0.3s ease-in-out"
   >
     <Icon as={icon} w={8} h={8} color="premium.primary" mb={4} />
-    <StatNumber fontSize="3xl" fontWeight="700" color="premium.text.primary">
+    <Box fontSize="3xl" fontWeight="700" color="premium.text.primary" mb={1}>
       {number}
-    </StatNumber>
-    <StatLabel color="premium.text.secondary" fontSize="sm" fontWeight="500">
+    </Box>
+    <Box color="premium.text.secondary" fontSize="sm" fontWeight="500">
       {label}
-    </StatLabel>
+    </Box>
   </MotionBox>
 );
 
