@@ -5,14 +5,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import premiumTheme from './theme/premiumTheme';
 import PremiumLayout from './components/PremiumLayout';
-import PremiumNavbar from './components/PremiumNavbar';
+import PremiumNavbar from './components/PremiumNavbar'; // ✅ Correct import
 import Home from './pages/Home';
 import MapView from './pages/MapView';
 import ListView from './pages/ListView';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import About from './pages/About'; // Add this
-import Profile from './pages/Profile'; // Add this
+import About from './pages/About';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -21,8 +21,8 @@ function App() {
       <AuthProvider>
         <Router>
           <PremiumLayout>
-            <PremiumNavbar />
-            <Box pt="70px"> {/* Reduced padding for better alignment */}
+            <PremiumNavbar /> {/* ✅ Using PremiumNavbar */}
+            <Box pt="70px">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/map" element={<MapView />} />
