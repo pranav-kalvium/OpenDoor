@@ -21,11 +21,12 @@ exports.getEvents = async (req, res) => {
       query.category = category;
     }
 
-    // Search in title and description
+    // Search in title, description, and category
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
+        { description: { $regex: search, $options: 'i' } },
+        { category: { $regex: search, $options: 'i' } }
       ];
     }
 
@@ -115,10 +116,17 @@ exports.getEventById = async (req, res) => {
 };
 
 // In your createEvent and updateEvent functions, ensure location is properly handled
+const path = require('path');
+const fs = require('fs');
+
 exports.createEvent = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      // Delete uploaded file if validation fails
+      if (req.file) {
+        fs.unlinkSync(req.file.path);
+      }
       return res.status(400).json({
         success: false,
         message: 'Validation failed',
@@ -142,6 +150,11 @@ exports.createEvent = async (req, res) => {
       location: locationData,
       createdBy: req.userId
     };
+
+    // Add image path if file uploaded
+    if (req.file) {
+      eventData.image = `/uploads/${req.file.filename}`;
+    }
 
     const event = new Event(eventData);
     await event.save();
@@ -167,6 +180,10 @@ exports.updateEvent = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      // Delete uploaded file if validation fails
+      if (req.file) {
+        fs.unlinkSync(req.file.path);
+      }
       return res.status(400).json({
         success: false,
         message: 'Validation failed',
@@ -191,9 +208,23 @@ exports.updateEvent = async (req, res) => {
       });
     }
 
+    const updateData = { ...req.body };
+
+    // Handle image update
+    if (req.file) {
+      // Delete old image if exists
+      if (event.image) {
+        const oldImagePath = path.join(__dirname, '../uploads', path.basename(event.image));
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+      updateData.image = `/uploads/${req.file.filename}`;
+    }
+
     const updatedEvent = await Event.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       { new: true, runValidators: true }
     ).populate('createdBy');
 

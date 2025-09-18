@@ -36,21 +36,7 @@ const EventCard = ({ event, onEventUpdate }) => {
   const { isAuthenticated } = useAuth();
   const toast = useToast();
 
-  // Add this helper function at the top of your EventCard component
-const getLocationString = (location) => {
-    if (typeof location === 'string') return location;
-    if (location && typeof location === 'object' && location.address) return location.address;
-    if (location && typeof location === 'object' && location.name) return location.name;
-    return 'Location not specified';
-  };
 
-  // Then use it in your JSX:
-  <Flex align="center">
-    <FaMapMarkerAlt color="#718096" />
-    <Text ml={2} fontSize="sm" color="gray.400" noOfLines={1}>
-      {getLocationString(event.location)}
-    </Text>
-  </Flex>
 
   const handleSaveEvent = async () => {
     if (!isAuthenticated) {
@@ -268,7 +254,18 @@ const getLocationString = (location) => {
             <Button variant="ghost" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button colorScheme="blue">
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                toast({
+                  title: 'Registration',
+                  description: 'Registration feature coming soon!',
+                  status: 'info',
+                  duration: 3000,
+                  isClosable: true,
+                });
+              }}
+            >
               Register
             </Button>
           </ModalFooter>
