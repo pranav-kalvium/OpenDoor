@@ -1,5 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
+const multer = require('multer');
+const path = require('path');
 const {
   getEvents,
   getEventById,
@@ -13,6 +15,19 @@ const {
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
+
+// Multer setup for image upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '../uploads'));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+  }
+});
+const upload = multer({ storage: storage });
 
 // Validation rules for events
 const eventValidation = [
@@ -43,8 +58,8 @@ const eventValidation = [
 router.get('/', getEvents);
 router.get('/search', searchEvents);
 router.get('/:id', getEventById);
-router.post('/', authMiddleware, eventValidation, createEvent);
-router.put('/:id', authMiddleware, eventValidation, updateEvent);
+router.post('/', authMiddleware, upload.single('image'), eventValidation, createEvent);
+router.put('/:id', authMiddleware, upload.single('image'), eventValidation, updateEvent);
 router.delete('/:id', authMiddleware, deleteEvent);
 router.post('/:id/save', authMiddleware, saveEvent);
 router.delete('/:id/save', authMiddleware, unsaveEvent);

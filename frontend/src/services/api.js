@@ -59,11 +59,39 @@ export const eventsAPI = {
   getById: (id) => 
     api.get(`/events/${id}`).then(res => res.data),
   
-  create: (eventData) => 
-    api.post('/events', eventData).then(res => res.data),
-  
-  update: (id, eventData) => 
-    api.put(`/events/${id}`, eventData).then(res => res.data),
+  create: (eventData, imageFile = null) => {
+    if (imageFile) {
+      const formData = new FormData();
+      Object.keys(eventData).forEach(key => {
+        formData.append(key, eventData[key]);
+      });
+      formData.append('image', imageFile);
+      return api.post('/events', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }).then(res => res.data);
+    } else {
+      return api.post('/events', eventData).then(res => res.data);
+    }
+  },
+
+  update: (id, eventData, imageFile = null) => {
+    if (imageFile) {
+      const formData = new FormData();
+      Object.keys(eventData).forEach(key => {
+        formData.append(key, eventData[key]);
+      });
+      formData.append('image', imageFile);
+      return api.put(`/events/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }).then(res => res.data);
+    } else {
+      return api.put(`/events/${id}`, eventData).then(res => res.data);
+    }
+  },
   
   delete: (id) => 
     api.delete(`/events/${id}`).then(res => res.data),
