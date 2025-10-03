@@ -63,32 +63,5 @@
 
 ---
 
-## 📦 Installation & Setup
-
-### 📌 Prerequisites
-- Node.js (v16+)
-- MongoDB (Local or Atlas)
-- Git
-
-
-opendoor/
-├── backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   └── server.js
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── context/
-│   │   ├── hooks/
-│   │   ├── services/
-│   │   ├── theme/
-│   │   └── utils/
-└── README.md
-
 
 ###This project is licensed under the MIT License. See LICENSE.md for details.
