@@ -2,7 +2,6 @@
 
 > **Discover. Save. Attend.** – OpenDoor is a premium event discovery platform built exclusively for **Alliance University Bangalore** students to explore academic, cultural, sports, and career events happening across campus and the city.
 
-![OpenDoor Banner](https://via.placeholder.com/1200x400/1a365d/ffffff?text=OpenDoor+-+Alliance+University+Events)
 
 ---
 
@@ -71,26 +70,7 @@
 - MongoDB (Local or Atlas)
 - Git
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/your-username/opendoor.git
-cd opendoor
 
-cd backend
-npm install
-
-# Configure environment
-cp .env.example .env
-
-npm run dev
-
-
-cd frontend
-npm install
-
-cp .env.example .env
-
-```
 opendoor/
 ├── backend/
 │   ├── config/
