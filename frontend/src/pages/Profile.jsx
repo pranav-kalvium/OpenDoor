@@ -41,6 +41,7 @@ import { FaEdit, FaCalendarAlt, FaHeart, FaGraduationCap, FaUserFriends, FaAward
 import { useAuth } from '../context/AuthContext';
 import { eventsAPI } from '../services/api';
 import EventCard from '../components/EventCard';
+import { Navigate } from 'react-router-dom';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -152,12 +153,9 @@ const Profile = () => {
     }));
   };
 
+  // Add this check at the beginning of the component
   if (!user) {
-    return (
-      <Container maxW="container.xl" py={8}>
-        <Text>Please log in to view your profile</Text>
-      </Container>
-    );
+    return <Navigate to="/login" replace />;
   }
 
   return (

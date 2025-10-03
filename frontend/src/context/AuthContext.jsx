@@ -23,15 +23,32 @@ const authReducer = (state, action) => {
   }
 };
 
-const initialState = {
-  user: null,
-  isAuthenticated: false,
-  loading: false,
-  error: null
-};
+// In the AuthProvider component, ensure initial state is properly set
+const AuthProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(authReducer, {
+    user: null,
+    loading: true,  // Add loading state
+    error: null
+  });
 
-export const AuthProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(authReducer, initialState);
+  useEffect(() => {
+    // Add this check on initial load
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (token && user) {
+      try {
+        dispatch({ 
+          type: 'LOGIN_SUCCESS', 
+          payload: JSON.parse(user) 
+        });
+      } catch (err) {
+        dispatch({ type: 'LOGIN_FAILURE' });
+      }
+    } else {
+      dispatch({ type: 'LOGIN_FAILURE' });
+    }
+  }, []);
   const toast = useToast();
 
   useEffect(() => {
@@ -164,8 +181,16 @@ export const useAuth = () => {
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
+  
+  // Add loading check
+  if (context.loading) {
+    return { loading: true };
+  }
+  
   return context;
 };
 
-// Remove this default export to avoid confusion
+export { AuthProvider };
+
+// Remove any default export if present
 // export default AuthContext;
