@@ -1,41 +1,71 @@
-// server.js (update the database connection part)
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
-
-// Import Routes and DB connection
+const dotenv = require('dotenv');
+const path = require('path');
+const connectDB = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const eventRoutes = require('./routes/eventRoutes');
-const connectDB = require('./config/database'); // Import the connection function
+
+dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Connect to database
+connectDB();
+
+const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'http://localhost:5174'];
+
+app.use(cors({
+  origin: function(origin, callback){
+    // allow requests with no origin 
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
-app.get('/', (req, res) => {
-  res.send('Hello World! OpenDoor Server is running!');
-});
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 
-// server.js (update the cors middleware)
-app.use(cors({
-  origin: 'http://localhost:5173', // Your frontend URL
-  credentials: true
-}));
-
-// Database connection and server start
-connectDB() // Use the centralized connection function
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`Server is running on port: ${port}`);
-    });
-  })
-  .catch((error) => {
-    console.error('Failed to start server:', error);
-    process.exit(1);
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'Server is running', 
+    timestamp: new Date().toISOString() 
   });
+});
+
+// 404 handler - REMOVED THE '*' WILDCARD
+app.use((req, res) => {
+  res.status(404).json({ 
+    success: false, 
+    message: 'API endpoint not found' 
+  });
+});
+
+// Global error handler
+app.use((error, req, res, next) => {
+  console.error('Unhandled error:', error);
+  res.status(500).json({ 
+    success: false, 
+    message: 'Internal server error' 
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+module.exports = app;

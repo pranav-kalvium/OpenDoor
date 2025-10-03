@@ -1,162 +1,267 @@
-// pages/Home.jsx
-import React from 'react';
-import { 
-  Container, VStack, Heading, Text, Button, Box, 
-  SimpleGrid, Icon, useBreakpointValue, Stat
+import React, { useState, useMemo } from 'react';
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Select,
+  SimpleGrid,
+  Skeleton,
+  Flex,
+  Button,
+  useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  VStack,
+  HStack,
+  useToast,
 } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
-import { MotionBox, MotionHeading, MotionText } from '../utils/motion';
-import { MapPin, Calendar, Users, Star } from 'lucide-react';
-import PremiumLayout from '../components/PremiumLayout';
+import { SearchIcon } from '@chakra-ui/icons';
+import { FaFilter, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa'; // Changed from FilterIcon to FaFilter
+import EventCard from '../components/EventCard';
+import useEvents from '../hooks/useEvents';
+import { useAuth } from '../context/AuthContext';
 
 const Home = () => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { events, loading, error, filters, setFilters } = useEvents();
+  const { isAuthenticated } = useAuth();
+  const toast = useToast();
+
+  const categories = useMemo(() => {
+    const uniqueCategories = new Set();
+    events.forEach(event => {
+      if (event.category) {
+        uniqueCategories.add(event.category);
+      }
+    });
+    return Array.from(uniqueCategories);
+  }, [events]);
+
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setFilters(prev => ({ ...prev, search: query }));
+  };
+
+  const handleCategoryChange = (e) => {
+    const category = e.target.value;
+    setSelectedCategory(category);
+    setFilters(prev => ({ ...prev, category: category || undefined }));
+  };
+
+  const handleDateChange = (e) => {
+    const date = e.target.value;
+    setSelectedDate(date);
+    setFilters(prev => ({ ...prev, date: date || undefined }));
+  };
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('');
+    setSelectedDate('');
+    setFilters({});
+  };
+
+  const handleEventUpdate = () => {
+    if (!isAuthenticated) {
+      toast({
+        title: 'Please login',
+        description: 'You need to be logged in to save events',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  if (error) {
+    return (
+      <Container maxW="container.xl" py={8}>
+        <Box textAlign="center" py={10}>
+          <Heading size="lg" mb={4}>Error Loading Events</Heading>
+          <Text color="gray.400">{error}</Text>
+          <Button mt={4} colorScheme="blue" onClick={() => window.location.reload()}>
+            Try Again
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
+
+  // Add this useEffect to update filters to fetch 25 events
+  React.useEffect(() => {
+    setFilters(prev => ({
+      ...prev,
+      limit: 25, // Increase number of events fetched to 25
+    }));
+  }, [setFilters]);
 
   return (
-    <PremiumLayout>
+    <Container maxW="container.xl" py={8}>
       {/* Hero Section */}
-      <Box position="relative" overflow="hidden">
-        <Container maxW="container.xl" pt={{ base: 32, md: 40 }} pb={{ base: 20, md: 32 }}>
-          <VStack spacing={8} textAlign="center" position="relative" zIndex={2}>
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <Text
-                color="premium.primaryLight"
-                fontWeight="600"
-                fontSize="sm"
-                letterSpacing="wide"
-                textTransform="uppercase"
-                mb={4}
-              >
-                Discover Your Campus
-              </Text>
-              
-              <MotionHeading
-                as="h1"
-                size={{ base: '3xl', md: '4xl' }}
-                fontWeight="800"
-                lineHeight="1.1"
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                Never Miss{' '}
-                <Box
-                  as="span"
-                  bg="linear-gradient(135deg, #818CF8 0%, #06B6D4 50%, #F59E0B 100%)"
-                  bgClip="text"
-                  display={{ base: 'block', md: 'inline' }}
-                >
-                  Amazing Events
-                </Box>
-              </MotionHeading>
-            </MotionBox>
-
-            <MotionText
-              fontSize={{ base: 'lg', md: 'xl' }}
-              color="premium.text.secondary"
-              maxW="600px"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              OpenDoor brings all campus events together in one beautiful, interactive platform. 
-              Find your next adventure with our intelligent event discovery system.
-            </MotionText>
-
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-            >
-              <Button
-                as={RouterLink}
-                to="/map"
-                variant="premium"
-                size="lg"
-                rightIcon={<MapPin size={20} />}
-                mr={4}
-                mb={{ base: 4, md: 0 }}
-              >
-                Explore Map
-              </Button>
-              <Button
-                as={RouterLink}
-                to="/list"
-                variant="glass"
-                size="lg"
-                rightIcon={<Calendar size={20} />}
-              >
-                View Events
-              </Button>
-            </MotionBox>
-          </VStack>
-        </Container>
+      <Box textAlign="center" mb={12}>
+        <Heading 
+          size="2xl" 
+          mb={4} 
+          bgGradient="linear(to-r, blue.400, purple.500)"
+          bgClip="text"
+        >
+          Discover Amazing Events
+        </Heading>
+        <Text fontSize="xl" color="gray.400" maxW="2xl" mx="auto">
+          Find and attend the best events in Alliance University,Benguluru. From academic conferences to social gatherings, we've got you covered.
+        </Text>
       </Box>
 
-      {/* Stats Section */}
-      <Container maxW="container.xl" py={20}>
-        <SimpleGrid columns={{ base: 2, md: 4 }} spacing={8}>
-          <StatCard
-            icon={Users}
-            number="500+"
-            label="Active Users"
-            delay={0.1}
-          />
-          <StatCard
-            icon={Calendar}
-            number="127"
-            label="Upcoming Events"
-            delay={0.2}
-          />
-          <StatCard
-            icon={MapPin}
-            number="15"
-            label="Locations"
-            delay={0.3}
-          />
-          <StatCard
-            icon={Star}
-            number="4.9"
-            label="Rating"
-            delay={0.4}
-          />
-        </SimpleGrid>
-      </Container>
-    </PremiumLayout>
+      {/* Search and Filters */}
+      <Box mb={8}>
+        <Flex direction={{ base: 'column', md: 'row' }} gap={4} mb={6}>
+          <InputGroup size="lg" flex="1">
+            <InputLeftElement pointerEvents="none">
+              <SearchIcon color="gray.400" />
+            </InputLeftElement>
+            <Input
+              placeholder="Search events..."
+              value={searchQuery}
+              onChange={handleSearch}
+              bg="whiteAlpha.100"
+              borderColor="whiteAlpha.200"
+              _hover={{ borderColor: 'whiteAlpha.300' }}
+              _focus={{ borderColor: 'blue.500', boxShadow: '0 0 0 1px blue.500' }}
+            />
+          </InputGroup>
+
+          <Button
+            leftIcon={<FaFilter />}
+            onClick={onOpen}
+            size="lg"
+            variant="outline"
+            borderColor="whiteAlpha.200"
+            _hover={{ bg: 'whiteAlpha.100' }}  // Fixed: added underscore
+          >
+            Filters
+          </Button>
+        </Flex>
+
+        {/* Active filters display */}
+        {(filters.category || filters.date || filters.search) && (
+          <HStack mb={4} spacing={3} flexWrap="wrap">
+            <Text fontSize="sm" color="gray.400">Active filters:</Text>
+            {filters.search && (
+              <Button size="sm" variant="outline" colorScheme="blue">
+                Search: {filters.search}
+              </Button>
+            )}
+            {filters.category && (
+              <Button size="sm" variant="outline" colorScheme="green">
+                Category: {filters.category}
+              </Button>
+            )}
+            {filters.date && (
+              <Button size="sm" variant="outline" colorScheme="purple">
+                Date: {new Date(filters.date).toLocaleDateString()}
+              </Button>
+            )}
+            <Button size="sm" variant="ghost" onClick={clearFilters}>
+              Clear all
+            </Button>
+          </HStack>
+        )}
+      </Box>
+
+      {/* Events Grid */}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-gray-300 rounded-lg h-96" />
+          ))}
+        </div>
+      ) : events.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map((event, index) => (
+            <EventCard
+              key={event._id || index}
+              event={event}
+              onEventUpdate={handleEventUpdate}
+              className="bg-white rounded-lg shadow-md p-6 text-white-900" // increased padding and ensured dark text
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-20">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">No events found</h2>
+          <p className="text-gray-600">
+            {filters.search || filters.category || filters.date
+              ? 'Try adjusting your filters to see more results.'
+              : 'Check back later for new events!'}
+          </p>
+          {(filters.search || filters.category || filters.date) && (
+            <button
+              onClick={clearFilters}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Filters Drawer */}
+      <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent bg="gray.800">
+          <DrawerCloseButton />
+          <DrawerHeader borderBottomWidth="1px">Filter Events</DrawerHeader>
+          <DrawerBody>
+            <VStack spacing={4} align="stretch" py={4}>
+              <Box>
+                <Text mb={2} fontWeight="medium">Category</Text>
+                <Select
+                  placeholder="All categories"
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
+                  bg="whiteAlpha.100"
+                  borderColor="whiteAlpha.200"
+                >
+                  {categories.map(category => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </Select>
+              </Box>
+
+              <Box>
+                <Text mb={2} fontWeight="medium">Date</Text>
+                <Input
+                  type="date"
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  bg="whiteAlpha.100"
+                  borderColor="whiteAlpha.200"
+                />
+              </Box>
+
+              <Button onClick={clearFilters} variant="outline" mt={4}>
+                Clear Filters
+              </Button>
+            </VStack>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+    </Container>
   );
 };
-
-// Stat Card Component
-const StatCard = ({ icon, number, label, delay }) => (
-  <MotionBox
-    initial={{ opacity: 0, y: 50 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.6, delay }}
-    textAlign="center"
-    p={6}
-    bg="premium.surface"
-    border="1px solid"
-    borderColor="rgba(255, 255, 255, 0.08)"
-    borderRadius="2xl"
-    _hover={{
-      transform: 'translateY(-8px)',
-      borderColor: 'premium.primary',
-      boxShadow: '0 20px 40px rgba(99, 102, 241, 0.15)',
-      transition: 'all 0.3s ease-in-out'
-    }}
-  >
-    <Icon as={icon} w={8} h={8} color="premium.primary" mb={4} />
-    <Box fontSize="3xl" fontWeight="700" color="premium.text.primary" mb={1}>
-      {number}
-    </Box>
-    <Box color="premium.text.secondary" fontSize="sm" fontWeight="500">
-      {label}
-    </Box>
-  </MotionBox>
-);
 
 export default Home;

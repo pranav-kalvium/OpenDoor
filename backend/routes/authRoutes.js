@@ -1,15 +1,39 @@
-// routes/authRoutes.js
 const express = require('express');
-const { signup, login } = require('../controllers/authController'); // Import the functions from the controller
+const { body } = require('express-validator');
+const { register, login, getProfile } = require('../controllers/authController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// Create a new router object
 const router = express.Router();
 
-// Define the routes
-// POST /api/auth/signup -> goes to the signup controller function
-// POST /api/auth/login -> goes to the login controller function
-router.post('/signup', signup);
-router.post('/login', login);
+// Validation rules
+const registerValidation = [
+  body('username')
+    .isLength({ min: 3 })
+    .withMessage('Username must be at least 3 characters long')
+    .isAlphanumeric()
+    .withMessage('Username must contain only letters and numbers'),
+  body('email')
+    .isEmail()
+    .withMessage('Please enter a valid email')
+    .normalizeEmail(),
+  body('password')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long')
+];
 
-// Export the router so we can use it in our server.js
+const loginValidation = [
+  body('email')
+    .isEmail()
+    .withMessage('Please enter a valid email')
+    .normalizeEmail(),
+  body('password')
+    .notEmpty()
+    .withMessage('Password is required')
+];
+
+// Routes
+router.post('/register', registerValidation, register);
+router.post('/login', loginValidation, login);
+router.get('/profile', authMiddleware, getProfile);
+
 module.exports = router;

@@ -1,86 +1,138 @@
-// controllers/authController.js
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
 
-// A function to create a JSON Web Token (JWT) for a user
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN, // Token expires in 90 days
+const generateToken = (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET || 'fallback-secret-key', {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
   });
 };
 
-// CONTROLLER 1: Sign up a new user
-exports.signup = async (req, res) => {
+exports.register = async (req, res) => {
   try {
-    // 1. Create a new user based on the data from the request body (req.body)
-    const newUser = await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { username, email, password } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }]
     });
 
-    // 2. Remove the password from the output for security (even though it's hashed)
-    newUser.password = undefined;
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'User already exists with this email or username'
+      });
+    }
 
-    // 3. Create a JWT token for the new user
-    const token = signToken(newUser._id);
+    // Create new user
+    const user = new User({ username, email, password });
+    await user.save();
 
-    // 4. Send success response with the token and user data
+    // Generate token
+    const token = generateToken(user._id);
+
     res.status(201).json({
-      status: 'success',
+      success: true,
+      message: 'User registered successfully',
       token,
-      data: {
-        user: newUser,
-      },
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email
+      }
     });
-  } catch (err) {
-    // 5. Catch any errors (like duplicate email) and send an error message
-    res.status(400).json({
-      status: 'fail',
-      message: err.message,
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
     });
   }
 };
 
-// CONTROLLER 2: Log in an existing user
 exports.login = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
     const { email, password } = req.body;
 
-    // 1) Check if email and password exist in the request
-    if (!email || !password) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Please provide email and password!',
-      });
-    }
-
-    // 2) Find the user in the database AND select the password field (which is usually hidden)
+    // Find user and include password for comparison
     const user = await User.findOne({ email }).select('+password');
-
-    // 3) Check if the user exists AND if the provided password is correct
-    if (!user || !(await user.correctPassword(password, user.password))) {
+    if (!user) {
       return res.status(401).json({
-        status: 'fail',
-        message: 'Incorrect email or password',
+        success: false,
+        message: 'Invalid credentials'
       });
     }
 
-    // 4) If everything is ok, create a token and send it to the client
-    const token = signToken(user._id);
-    user.password = undefined; // Don't send the password back
+    // Check password
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
+    }
 
-    res.status(200).json({
-      status: 'success',
+    // Generate token
+    const token = generateToken(user._id);
+
+    res.json({
+      success: true,
+      message: 'Login successful',
       token,
-      data: {
-        user,
-      },
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        profile: user.profile
+      }
     });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err.message,
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+exports.getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).populate('savedEvents');
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    console.error('Get profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
     });
   }
 };

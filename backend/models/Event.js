@@ -1,68 +1,73 @@
-// models/Event.js
 const mongoose = require('mongoose');
 
-// Define the rules (schema) for what an Event document looks like
 const eventSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: [true, 'An event must have a title'],
-    trim: true
+    required: [true, 'Event title is required'],
+    trim: true,
+    minlength: [3, 'Title must be at least 3 characters long'],
+    maxlength: [100, 'Title cannot exceed 100 characters']
   },
   description: {
     type: String,
-    required: [true, 'An event must have a description']
+    required: [true, 'Event description is required'],
+    minlength: [10, 'Description must be at least 10 characters long']
+  },
+  date: {
+    type: Date,
+    required: [true, 'Event date is required']
+  },
+  location: {
+    type: mongoose.Schema.Types.Mixed, // Changed to Mixed to handle both string and object
+    required: [true, 'Location is required']
   },
   category: {
     type: String,
-    required: true,
-    enum: { // The 'enum' validator means the value must be in this list
-      values: ['music', 'food', 'academic', 'sports', 'arts', 'social', 'other'],
-      message: 'Category is either: music, food, academic, sports, arts, social, other'
-    }
+    required: [true, 'Event category is required'],
+    enum: ['academic', 'social', 'cultural', 'sports', 'career', 'other']
   },
-  date: {
-    type: Date, // This field will store a full date and time
-    required: [true, 'An event must have a date']
+  image: {
+    type: String,
+    default: null
   },
-  // This is a nested object to store location data
-  location: {
-    name: {
-      type: String,
-      required: [true, 'An event must have a venue name']
-    },
-    // GeoJSON is a standard format for storing geographic coordinates.
-    // This is crucial for putting pins on a map later.
-    coordinates: {
-      type: {
-        type: String,
-        default: 'Point',
-        enum: ['Point'] // 'location.type' must be 'Point'
-      },
-      coordinates: {
-        type: [Number], // An array of numbers: [longitude, latitude]
-        required: true
-      }
-    },
-    address: String
+  website: {
+    type: String,
+    default: null
   },
   price: {
-    type: Number,
-    default: 0
-  },
-  imageUrl: {
     type: String,
-    default: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80' // A default event image
+    default: 'Free'
   },
-  // We'll use this later for our web scraper to know where the event came from.
-  source: {
-    type: String,
-    default: 'OpenDoor'
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
-  sourceUrl: String // A link back to the original event page
+  attendees: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 }, {
-  timestamps: true // Adds 'createdAt' and 'updatedAt'
+  timestamps: true
 });
 
-// Create the Model from the Schema and export it
-const Event = mongoose.model('Event', eventSchema);
-module.exports = Event;
+// Virtual for getting location string
+eventSchema.virtual('locationString').get(function() {
+  if (typeof this.location === 'string') {
+    return this.location;
+  }
+  if (this.location && this.location.address) {
+    return this.location.address;
+  }
+  return 'Location not specified';
+});
+
+// Ensure virtuals are included in JSON output
+eventSchema.set('toJSON', { virtuals: true });
+
+// Index for better search performance
+eventSchema.index({ title: 'text', description: 'text', category: 'text' });
+eventSchema.index({ date: 1 });
+eventSchema.index({ category: 1 });
+
+module.exports = mongoose.model('Event', eventSchema);
