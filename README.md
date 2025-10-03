@@ -75,3 +75,9 @@
 ```bash
 git clone https://github.com/your-username/opendoor.git
 cd opendoor
+
+cd backend
+npm install
+
+# Configure environment
+cp .env.example .env
