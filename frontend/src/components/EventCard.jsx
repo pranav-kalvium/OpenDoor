@@ -112,16 +112,16 @@ const EventCard = ({ event, onEventUpdate }) => {
         mx="auto"
         overflow="hidden"
         variant="outline"
-        bg="whiteAlpha.100"
+        bg="whiteAlpha.200" // Slightly more opaque background for better contrast
         backdropFilter="blur(10px)"
         border="1px solid"
-        borderColor="whiteAlpha.200"
+        borderColor="whiteAlpha.300" // Slightly brighter border
         whileHover={{ y: -5, transition: { duration: 0.2 } }}
         transition="all 0.3s"
       >
         <CardHeader p={4}>
           <Flex justify="space-between" align="center">
-            <Badge colorScheme="purple" px={2} py={1} borderRadius="full">
+            <Badge colorScheme="purple" px={2} py={1} borderRadius="full" color="white">
               {event.category || 'Event'}
             </Badge>
             <IconButton
@@ -132,9 +132,10 @@ const EventCard = ({ event, onEventUpdate }) => {
               onClick={handleSaveEvent}
               variant="ghost"
               isRound
+              color="whiteAlpha.900"
             />
           </Flex>
-          <Heading size="md" mt={2} noOfLines={1}>
+          <Heading size="md" mt={2} noOfLines={1} color="whiteAlpha.900">
             {event.title}
           </Heading>
         </CardHeader>
@@ -152,28 +153,28 @@ const EventCard = ({ event, onEventUpdate }) => {
             />
           )}
           
-          <Text noOfLines={3} mb={4}>
+          <Text noOfLines={3} mb={4} color="whiteAlpha.800">
             {event.description}
           </Text>
 
           <Flex direction="column" gap={2}>
             <Flex align="center">
-              <FaCalendarAlt color="#718096" />
-              <Text ml={2} fontSize="sm" color="gray.400">
+              <FaCalendarAlt color="#CBD5E0" />
+              <Text ml={2} fontSize="sm" color="whiteAlpha.700">
                 {formatDate(event.date)}
               </Text>
             </Flex>
             
             <Flex align="center">
-              <FaClock color="#718096" />
-              <Text ml={2} fontSize="sm" color="gray.400">
+              <FaClock color="#CBD5E0" />
+              <Text ml={2} fontSize="sm" color="whiteAlpha.700">
                 {formatTime(event.date)}
               </Text>
             </Flex>
             
             <Flex align="center">
-              <FaMapMarkerAlt color="#718096" />
-              <Text ml={2} fontSize="sm" color="gray.400" noOfLines={1}>
+              <FaMapMarkerAlt color="#CBD5E0" />
+              <Text ml={2} fontSize="sm" color="whiteAlpha.700" noOfLines={1}>
                 {typeof event.location === 'object' ? event.location.address : event.location}
               </Text>
             </Flex>

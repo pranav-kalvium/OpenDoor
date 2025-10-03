@@ -99,6 +99,14 @@ const Home = () => {
     );
   }
 
+  // Add this useEffect to update filters to fetch 25 events
+  React.useEffect(() => {
+    setFilters(prev => ({
+      ...prev,
+      limit: 25, // Increase number of events fetched to 25
+    }));
+  }, [setFilters]);
+
   return (
     <Container maxW="container.xl" py={8}>
       {/* Hero Section */}
@@ -112,7 +120,7 @@ const Home = () => {
           Discover Amazing Events
         </Heading>
         <Text fontSize="xl" color="gray.400" maxW="2xl" mx="auto">
-          Find and attend the best events around NYU. From academic conferences to social gatherings, we've got you covered.
+          Find and attend the best events in Alliance University,Benguluru. From academic conferences to social gatherings, we've got you covered.
         </Text>
       </Box>
 
@@ -174,38 +182,39 @@ const Home = () => {
 
       {/* Events Grid */}
       {loading ? (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} height="400px" borderRadius="lg" />
+            <div key={i} className="animate-pulse bg-gray-300 rounded-lg h-96" />
           ))}
-        </SimpleGrid>
+        </div>
       ) : events.length > 0 ? (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event, index) => (
-            <EventCard 
-              key={event._id || index} 
-              event={event} 
+            <EventCard
+              key={event._id || index}
+              event={event}
               onEventUpdate={handleEventUpdate}
+              className="bg-white rounded-lg shadow-md p-6 text-white-900" // increased padding and ensured dark text
             />
           ))}
-        </SimpleGrid>
+        </div>
       ) : (
-        <Box textAlign="center" py={20}>
-          <Heading size="lg" mb={4} color="gray.400">
-            No events found
-          </Heading>
-          <Text color="gray.500">
-            {filters.search || filters.category || filters.date 
-              ? 'Try adjusting your filters to see more results.' 
-              : 'Check back later for new events!'
-            }
-          </Text>
+        <div className="text-center py-20">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">No events found</h2>
+          <p className="text-gray-600">
+            {filters.search || filters.category || filters.date
+              ? 'Try adjusting your filters to see more results.'
+              : 'Check back later for new events!'}
+          </p>
           {(filters.search || filters.category || filters.date) && (
-            <Button mt={4} onClick={clearFilters}>
+            <button
+              onClick={clearFilters}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
               Clear Filters
-            </Button>
+            </button>
           )}
-        </Box>
+        </div>
       )}
 
       {/* Filters Drawer */}
