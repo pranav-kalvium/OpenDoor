@@ -81,3 +81,34 @@ npm install
 
 # Configure environment
 cp .env.example .env
+
+npm run dev
+
+
+cd frontend
+npm install
+
+cp .env.example .env
+
+```
+opendoor/
+├── backend/
+│   ├── config/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   └── server.js
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── context/
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   ├── theme/
+│   │   └── utils/
+└── README.md
+
+
+###This project is licensed under the MIT License. See LICENSE.md for details.
