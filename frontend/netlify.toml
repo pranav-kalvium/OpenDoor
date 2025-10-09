@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Redirects all routes to index.html (important for React/Vite single-page apps)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
