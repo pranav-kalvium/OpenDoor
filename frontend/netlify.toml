@@ -1,9 +1,33 @@
+# ===========================
+# ✅ Build Settings
+# ===========================
 [build]
   command = "npm run build"
   publish = "dist"
 
-# Redirects all routes to index.html (important for React/Vite single-page apps)
+# ===========================
+# 🌐 Redirects & Routing
+# ===========================
+
+# Handle React Router (SPA fallback)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Proxy API requests to Render backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://opendoor-wniu.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# ===========================
+# 🔒 Headers (optional but clean)
+# ===========================
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
