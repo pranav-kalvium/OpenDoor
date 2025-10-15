@@ -9,7 +9,7 @@
 # 🌐 Redirects & Routing
 # ===========================
 
-# Handle React Router (SPA fallback)
+# Handle React Router (SPA fallbacks)
 [[redirects]]
   from = "/*"
   to = "/index.html"
