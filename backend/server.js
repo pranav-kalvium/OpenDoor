@@ -44,7 +44,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 404 handler - REMOVED THE '*' WILDCARD
+
 app.use((req, res) => {
   res.status(404).json({ 
     success: false, 
