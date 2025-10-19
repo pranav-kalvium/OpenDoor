@@ -16,12 +16,12 @@ connectDB();
 
 const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'http://localhost:5174', 'https://opendooor.netlify.app' ];
 
-// app.use(cors({
+
 
 
 
 app.use(cors({
-  origin: [process.env.FRONTEND_URL], // your frontend domain
+  origin: [process.env.FRONTEND_URL], 
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
