@@ -9,8 +9,6 @@
 
 **OpenDoor** transform how students engage with campus life. From seminars and fests to hackathons and job fairs — our platform brings every opportunity under one roof. With a sleek **Glassmorphism UI**, real-time event updates, and smart filtering, OpenDoor ensures you never miss an event that matters.
 
-🔗 **Live Demo:** Coming Soon  
-💻 **GitHub Repo:** [Your Repository Link]
 
 ---
 
