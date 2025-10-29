@@ -112,7 +112,7 @@ const EventCard = ({ event, onEventUpdate }) => {
         mx="auto"
         overflow="hidden"
         variant="outline"
-        bg="whiteAlpha.200" // Slightly more opaque background for better contrast
+        bg="whiteAlpha.200" 
         backdropFilter="blur(10px)"
         border="1px solid"
         borderColor="whiteAlpha.300" 
