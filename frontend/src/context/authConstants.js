@@ -1,4 +1,3 @@
-// authConstants.js - Separate file for constants to fix react-refresh poly-export issue
 export const AUTH_ACTIONS = {
   LOGIN_START: 'LOGIN_START',
   LOGIN_SUCCESS: 'LOGIN_SUCCESS',
