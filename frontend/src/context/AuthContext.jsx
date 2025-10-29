@@ -23,7 +23,7 @@ const authReducer = (state, action) => {
   }
 };
 
-// In the AuthProvider component, ensure initial state is properly set
+
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     user: null,
