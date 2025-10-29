@@ -18,7 +18,7 @@ const eventSchema = new mongoose.Schema({
     required: [true, 'Event date is required']
   },
   location: {
-    type: mongoose.Schema.Types.Mixed, // Changed to Mixed to handle both string and object
+    type: mongoose.Schema.Types.Mixed, 
     required: [true, 'Location is required']
   },
   category: {
