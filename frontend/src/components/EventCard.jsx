@@ -115,7 +115,7 @@ const EventCard = ({ event, onEventUpdate }) => {
         bg="whiteAlpha.200" // Slightly more opaque background for better contrast
         backdropFilter="blur(10px)"
         border="1px solid"
-        borderColor="whiteAlpha.300" // Slightly brighter border
+        borderColor="whiteAlpha.300" 
         whileHover={{ y: -5, transition: { duration: 0.2 } }}
         transition="all 0.3s"
       >
