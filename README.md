@@ -25,7 +25,7 @@
 - 🧊 **Glassmorphism UI** – Sleek frosted-glass components  
 - 🌙 **Dark Theme** – Gradient accents with premium dark mode  
 - 📱 **Responsive** – Works beautifully across all devices  
-- 🌀 **Framer Motion** – Smooth, cinematic animations  
+- 🌀 **Framer Motion** – cinematic animations  
 - 🧠 **FAANG-Level UX** – Polished, industry-grade experience  
 
 ### 🛡️ Technical Features
