@@ -50,7 +50,7 @@
 - 🟢 **Node.js** – Runtime environment  
 - 🚀 **Express.js** – Backend framework  
 - 🍃 **MongoDB + Mongoose** – NoSQL database  
-- 🔐 **JWT & bcryptjs** – Secure authentication  
+- 🔐 **JWT & bcryptjs** – Secure authentications
 - 🌐 **CORS** – Cross-origin support  
 
 ### 🧪 Dev Tools
