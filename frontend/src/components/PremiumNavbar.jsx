@@ -29,7 +29,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@chakra-ui/icons';
-import { FaMap, FaUser, FaCalendarAlt } from 'react-icons/fa';
+import { FiUser, FiMap, FiCalendar, FiPlus, FiSettings } from 'react-icons/fi';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -53,17 +53,17 @@ export default function PremiumNavbar() {
   return (
     <Box position="fixed" top={0} width="100%" zIndex={1000}>
       <Flex
-        bg={useColorModeValue('whiteAlpha.100', 'whiteAlpha.100')}
-        color={useColorModeValue('gray.200', 'white')}
+        bg="rgba(255, 255, 255, 0.9)"
+        color="gray.800"
         minH={'60px'}
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}
         borderStyle={'solid'}
-        borderColor={useColorModeValue('whiteAlpha.200', 'whiteAlpha.200')}
+        borderColor="gray.100"
         align={'center'}
-        backdropFilter="blur(10px)"
-        boxShadow="0 4px 24px rgba(0, 0, 0, 0.1)"
+        backdropFilter="blur(12px)"
+        boxShadow="0 4px 20px rgba(0, 0, 0, 0.05)"
       >
         <Flex
           flex={{ base: 1, md: 'auto' }}
@@ -83,7 +83,7 @@ export default function PremiumNavbar() {
           <Text
             textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
             fontFamily={'heading'}
-            color={useColorModeValue('white', 'white')}
+            color="gray.900"
             fontWeight="bold"
             fontSize="xl"
             as={RouterLink}
@@ -93,15 +93,16 @@ export default function PremiumNavbar() {
           </Text>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-            <DesktopNav />
+            <DesktopNav navItems={getNavItems(user?.role)} />
           </Flex>
         </Flex>
 
         <Stack
-          flex={{ base: 1, md: 0 }}
+          flex={{ base: 1, md: 'auto' }}
           justify={'flex-end'}
           direction={'row'}
           spacing={6}
+          alignItems={'center'}
         >
           {isAuthenticated ? (
             <Menu>
@@ -111,28 +112,29 @@ export default function PremiumNavbar() {
                 variant={'link'}
                 cursor={'pointer'}
                 minW={0}
+                zIndex={1001}
               >
                 <Avatar
                   size={'sm'}
                   name={user?.username}
                   src={user?.profile?.avatar}
-                  bg="blue.500"
+                  bg="brand.500"
                   color="white"
                 />
               </MenuButton>
-              <MenuList bg="gray.800" borderColor="whiteAlpha.200">
+              <MenuList bg="white" borderColor="gray.100" zIndex={1500} boxShadow="lg">
                 <MenuItem 
                   as={RouterLink} 
                   to="/profile"
-                  _hover={{ bg: 'whiteAlpha.100' }}
-                  icon={<FaUser />}
+                  _hover={{ bg: 'gray.50', color: 'brand.600' }}
+                  icon={<FiUser />}
                 >
                   Profile
                 </MenuItem>
-                <MenuDivider />
+                <MenuDivider borderColor="gray.100" />
                 <MenuItem 
                   onClick={handleLogout}
-                  _hover={{ bg: 'whiteAlpha.100' }}
+                  _hover={{ bg: 'gray.50', color: 'red.500' }}
                 >
                   Logout
                 </MenuItem>
@@ -143,11 +145,11 @@ export default function PremiumNavbar() {
               <Button
                 as={RouterLink}
                 fontSize={'sm'}
-                fontWeight={400}
+                fontWeight={500}
                 variant={'link'}
                 to="/login"
-                color="whiteAlpha.800"
-                _hover={{ color: 'white' }}
+                color="gray.600"
+                _hover={{ color: 'brand.600' }}
               >
                 Sign In
               </Button>
@@ -158,9 +160,11 @@ export default function PremiumNavbar() {
                 fontSize={'sm'}
                 fontWeight={600}
                 color={'white'}
-                bg={'blue.500'}
+                bg={'brand.500'}
                 _hover={{
-                  bg: 'blue.600',
+                  bg: 'brand.600',
+                  transform: 'translateY(-1px)',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
                 }}
               >
                 Sign Up
@@ -171,20 +175,20 @@ export default function PremiumNavbar() {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
+        <MobileNav navItems={getNavItems(user?.role)} />
       </Collapse>
     </Box>
   );
 }
 
-const DesktopNav = () => {
-  const linkColor = useColorModeValue('gray.200', 'gray.200');
-  const linkHoverColor = useColorModeValue('white', 'white');
-  const popoverContentBgColor = useColorModeValue('gray.800', 'gray.800');
+const DesktopNav = ({ navItems }) => {
+  const linkColor = 'gray.600';
+  const linkHoverColor = 'brand.600';
+  const popoverContentBgColor = 'white';
 
   return (
     <Stack direction={'row'} spacing={4} alignItems="center">
-      {NAV_ITEMS.map((navItem) => (
+      {navItems.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger={'hover'} placement={'bottom-start'}>
             <PopoverTrigger>
@@ -246,8 +250,9 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
         <Box>
           <Text
             transition={'all .3s ease'}
-            _groupHover={{ color: 'blue.400' }}
+            _groupHover={{ color: 'brand.500' }}
             fontWeight={500}
+            color="gray.800"
           >
             {label}
           </Text>
@@ -264,23 +269,23 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
           align={'center'}
           flex={1}
         >
-          <Icon color={'blue.400'} w={5} h={5} as={ChevronRightIcon} />
+          <Icon color={'brand.500'} w={5} h={5} as={ChevronRightIcon} />
         </Flex>
       </Stack>
     </Link>
   );
 };
 
-const MobileNav = () => {
+const MobileNav = ({ navItems }) => {
   return (
     <Stack
-      bg={useColorModeValue('gray.800', 'gray.800')}
+      bg="white"
       p={4}
       display={{ md: 'none' }}
       borderBottom="1px solid"
-      borderColor="whiteAlpha.200"
+      borderColor="gray.100"
     >
-      {NAV_ITEMS.map((navItem) => (
+      {navItems.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
@@ -303,11 +308,12 @@ const MobileNavItem = ({ label, children, href, icon: NavIcon }) => {
         }}
       >
         <Text
-          fontWeight={600}
-          color={useColorModeValue('gray.200', 'gray.200')}
+          fontWeight={500}
+          color="gray.700"
           display="flex"
           alignItems="center"
           gap={2}
+          _hover={{ color: 'brand.600' }}
         >
           {NavIcon && <NavIcon />}
           {label}
@@ -339,8 +345,8 @@ const MobileNavItem = ({ label, children, href, icon: NavIcon }) => {
                 as={RouterLink}
                 to={child.href} 
                 py={2}
-                color="gray.400"
-                _hover={{ color: 'white' }}
+                color="gray.500"
+                _hover={{ color: 'brand.600' }}
               >
                 {child.label}
               </Link>
@@ -351,20 +357,40 @@ const MobileNavItem = ({ label, children, href, icon: NavIcon }) => {
   );
 };
 
-const NAV_ITEMS = [
-  {
-    label: 'Events',
-    href: '/',
-    icon: FaCalendarAlt,
-  },
-  {
-    label: 'Map',
-    href: '/map',
-    icon: FaMap,
-  },
-  {
-    label: 'Profile',
-    href: '/profile',
-    icon: FaUser,
-  },
-];
+const getNavItems = (role) => {
+  const items = [
+    {
+      label: 'Events',
+      href: '/',
+      icon: FiCalendar,
+    },
+    {
+      label: 'Map',
+      href: '/map',
+      icon: FiMap,
+    },
+    {
+      label: 'Profile',
+      href: '/profile',
+      icon: FiUser,
+    },
+  ];
+
+  if (role === 'manager' || role === 'admin') {
+    items.push({
+      label: 'Create Event',
+      href: '/events/create',
+      icon: FiPlus,
+    });
+  }
+
+  if (role === 'admin') {
+    items.push({
+      label: 'Admin',
+      href: '/admin',
+      icon: FiSettings,
+    });
+  }
+
+  return items;
+};

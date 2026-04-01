@@ -64,7 +64,7 @@ const MapView = () => {
           Events Map
         </Heading>
         <Text color="gray.400">
-          Discover events around NYU campus and New York City
+          Discover events around Alliance University campus and Bangalore
         </Text>
       </Box>
 
@@ -78,9 +78,9 @@ const MapView = () => {
             placeholder="Search events on map..."
             value={searchQuery}
             onChange={handleSearch}
-            bg="whiteAlpha.100"
-            borderColor="whiteAlpha.200"
-            _hover={{ borderColor: 'whiteAlpha.300' }}
+            bg="white"
+            borderColor="gray.200"
+            _hover={{ borderColor: 'gray.300' }}
           />
         </InputGroup>
 
@@ -88,8 +88,8 @@ const MapView = () => {
           placeholder="All categories"
           value={selectedCategory}
           onChange={handleCategoryChange}
-          bg="whiteAlpha.100"
-          borderColor="whiteAlpha.200"
+          bg="white"
+          borderColor="gray.200"
           width={{ base: '100%', md: '200px' }}
         >
           {categories.map(category => (
@@ -107,7 +107,7 @@ const MapView = () => {
             id="saved-events"
             isChecked={showSavedOnly}
             onChange={(e) => setShowSavedOnly(e.target.checked)}
-            colorScheme="blue"
+            colorScheme="brand"
           />
         </FormControl>
       </Flex>
@@ -130,14 +130,15 @@ const MapView = () => {
           position="absolute"
           top={4}
           left={4}
-          bg="blackAlpha.700"
-          color="white"
+          bg="white"
+          color="gray.800"
+          boxShadow="md"
           px={3}
           py={2}
           borderRadius="md"
           zIndex={1000}
         >
-          <Text fontSize="sm">
+          <Text fontSize="sm" fontWeight="bold">
             {events.length} event{events.length !== 1 ? 's' : ''} found
           </Text>
         </Box>
@@ -146,20 +147,20 @@ const MapView = () => {
       {/* Legend */}
       <Flex mt={4} gap={4} flexWrap="wrap" justify="center">
         <Flex align="center" gap={2}>
-          <Box w={3} h={3} bg="blue.500" borderRadius="full" />
-          <Text fontSize="sm" color="gray.400">Academic Events</Text>
+          <Box w={3} h={3} bg="yellow.500" borderRadius="full" />
+          <Text fontSize="sm" color="gray.600">Academic Events</Text>
         </Flex>
         <Flex align="center" gap={2}>
           <Box w={3} h={3} bg="green.500" borderRadius="full" />
-          <Text fontSize="sm" color="gray.400">Social Events</Text>
-        </Flex>
-        <Flex align="center" gap={2}>
-          <Box w={3} h={3} bg="purple.500" borderRadius="full" />
-          <Text fontSize="sm" color="gray.400">Cultural Events</Text>
+          <Text fontSize="sm" color="gray.600">Social Events</Text>
         </Flex>
         <Flex align="center" gap={2}>
           <Box w={3} h={3} bg="orange.500" borderRadius="full" />
-          <Text fontSize="sm" color="gray.400">Sports Events</Text>
+          <Text fontSize="sm" color="gray.600">Cultural Events</Text>
+        </Flex>
+        <Flex align="center" gap={2}>
+          <Box w={3} h={3} bg="teal.500" borderRadius="full" />
+          <Text fontSize="sm" color="gray.600">Sports Events</Text>
         </Flex>
       </Flex>
     </Container>

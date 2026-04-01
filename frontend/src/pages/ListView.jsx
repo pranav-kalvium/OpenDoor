@@ -2,7 +2,7 @@
 import React from 'react';
 import { Box, Heading, VStack, Text, SimpleGrid } from '@chakra-ui/react';
 import EventCard from '../components/EventCard';
-import { useEvents } from '../hooks/useEvents';
+import useEvents from '../hooks/useEvents';
 
 const ListView = () => {
   const { events, loading, error } = useEvents();

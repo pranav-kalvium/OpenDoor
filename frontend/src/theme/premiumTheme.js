@@ -2,27 +2,27 @@ import { extendTheme } from '@chakra-ui/react';
 
 const premiumTheme = extendTheme({
   config: {
-    initialColorMode: 'dark',
+    initialColorMode: 'light',
     useSystemColorMode: false,
   },
   colors: {
     brand: {
-      50: '#f0f9ff',
-      100: '#e0f2fe',
-      200: '#bae6fd',
-      300: '#7dd3fc',
-      400: '#38bdf8',
-      500: '#0ea5e9',
-      600: '#0284c7',
-      700: '#0369a1',
-      800: '#075985',
-      900: '#0c4a6e',
+      50: '#ecfdf5',
+      100: '#d1fae5',
+      200: '#a7f3d0',
+      300: '#6ee7b7',
+      400: '#34d399',
+      500: '#10b981', // Emerald green
+      600: '#059669',
+      700: '#047857',
+      800: '#065f46',
+      900: '#064e3b',
     },
     alliance: {
-      primary: '#1a365d', // Alliance blue
-      secondary: '#f56565', // Alliance red accent
-      gold: '#d69e2e',
-      purple: '#805ad5',
+      primary: '#10b981', // Changed from blue to emerald green
+      secondary: '#059669', // Darker emerald instead of red
+      dark: '#1A202C', // Dark gray/navy replacement for anything needing a dark contrasting bg
+      gold: '#FBBF24', // Keeping for subtle highlights if needed, but no blue/purple
     },
     gray: {
       50: '#f9fafb',
@@ -38,36 +38,38 @@ const premiumTheme = extendTheme({
     },
   },
   fonts: {
-    heading: '"Poppins", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    heading: '"Outfit", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     body: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   },
   styles: {
     global: {
       'html, body': {
-        bg: 'linear-gradient(135deg, #0f0f23 0%, #1a202c 100%)',
+        bg: '#F0FDF4', // Light mint/white background
         backgroundAttachment: 'fixed',
-        color: 'white',
+        color: 'gray.800',
         minHeight: '100vh',
         fontFeatureSettings: '"ss01", "ss02", "cv01", "cv02"',
+        scrollBehavior: 'smooth',
       },
       '*::placeholder': {
         color: 'gray.400',
       },
       '*, *::before, &::after': {
-        borderColor: 'whiteAlpha.200',
+        borderColor: 'gray.200',
       },
       '.glass-card': {
-        background: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        borderRadius: '12px',
-        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+        background: '#FFFFFF',
+        border: '1px solid',
+        borderColor: 'gray.100',
+        borderRadius: '16px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
       },
       '.glass-navbar': {
-        background: 'rgba(255, 255, 255, 0.08)',
+        background: 'rgba(255, 255, 255, 0.9)',
         backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255, 255, 255, 0.18)',
-        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+        borderBottom: '1px solid',
+        borderColor: 'gray.100',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)',
       },
     },
   },
@@ -75,31 +77,30 @@ const premiumTheme = extendTheme({
     Button: {
       variants: {
         solid: {
-          bg: 'linear-gradient(135deg, alliance.primary 0%, #2d3748 100%)',
+          bg: 'brand.500',
           color: 'white',
           _hover: {
-            bg: 'linear-gradient(135deg, #2d3748 0%, alliance.primary 100%)',
-            transform: 'translateY(-2px)',
-            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+            bg: 'brand.600',
+            transform: 'translateY(-1px)',
+            boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
           },
           _active: {
-            bg: 'linear-gradient(135deg, #1a202c 0%, alliance.primary 100%)',
+            bg: 'brand.700',
           },
         },
         outline: {
           border: '2px solid',
-          borderColor: 'whiteAlpha.300',
-          color: 'white',
+          borderColor: 'brand.500',
+          color: 'brand.600',
           _hover: {
-            bg: 'whiteAlpha.100',
-            borderColor: 'whiteAlpha.400',
+            bg: 'brand.50',
           },
         },
         ghost: {
-          color: 'whiteAlpha.800',
+          color: 'gray.600',
           _hover: {
-            bg: 'whiteAlpha.100',
-            color: 'white',
+            bg: 'gray.50',
+            color: 'brand.600',
           },
         },
       },
@@ -108,11 +109,11 @@ const premiumTheme = extendTheme({
       variants: {
         elevated: {
           container: {
-            bg: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(10px)',
+            bg: '#FFFFFF',
             border: '1px solid',
-            borderColor: 'rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+            borderColor: 'gray.100',
+            borderRadius: '16px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
           },
         },
       },
@@ -122,14 +123,15 @@ const premiumTheme = extendTheme({
         outline: {
           field: {
             border: '1px solid',
-            borderColor: 'rgba(255, 255, 255, 0.2)',
-            bg: 'rgba(255, 255, 255, 0.05)',
+            borderColor: 'gray.200',
+            bg: '#FFFFFF',
+            color: 'gray.800',
             _hover: {
-              borderColor: 'rgba(255, 255, 255, 0.3)',
+              borderColor: 'brand.300',
             },
             _focus: {
               borderColor: 'brand.500',
-              boxShadow: '0 0 0 1px brand.500',
+              boxShadow: '0 0 0 1px #10b981',
             },
           },
         },
@@ -138,10 +140,11 @@ const premiumTheme = extendTheme({
     Modal: {
       baseStyle: {
         dialog: {
-          bg: 'rgba(26, 32, 44, 0.9)',
-          backdropFilter: 'blur(10px)',
+          bg: '#FFFFFF',
           border: '1px solid',
-          borderColor: 'rgba(255, 255, 255, 0.2)',
+          borderColor: 'gray.100',
+          borderRadius: '16px',
+          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
         },
       },
     },

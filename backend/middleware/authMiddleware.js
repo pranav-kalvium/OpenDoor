@@ -12,7 +12,7 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret-key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId);
     // tokens
     if (!user) {
@@ -22,6 +22,7 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
+    req.user = user;
     req.userId = decoded.userId;
     next();
   } catch (error) {

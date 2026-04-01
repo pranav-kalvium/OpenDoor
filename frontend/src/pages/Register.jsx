@@ -103,11 +103,12 @@ const Register = () => {
       if (result.success) {
         toast({
           title: 'Account created!',
-          description: 'Welcome to OpenDoor!',
+          description: result.message || 'Please check your email to verify your account.',
           status: 'success',
-          duration: 3000,
+          duration: 5000,
+          isClosable: true,
         });
-        navigate('/');
+        navigate('/login');
       }
     } catch (error) {
       console.error('Registration error:', error);
@@ -124,18 +125,19 @@ const Register = () => {
         transition={{ duration: 0.5 }}
       >
         <Box
-          bg="whiteAlpha.100"
+          bg="white"
           p={8}
           borderRadius="lg"
           boxShadow="xl"
-          backdropFilter="blur(10px)"
+          border="1px solid"
+          borderColor="gray.100"
         >
           <VStack spacing={6} align="stretch">
             <Box textAlign="center">
-              <Heading size="xl" mb={2} bgGradient="linear(to-r, blue.400, purple.500)" bgClip="text">
+              <Heading size="xl" mb={2} bgGradient="linear(to-r, brand.500, brand.400)" bgClip="text">
                 Join OpenDoor
               </Heading>
-              <Text color="gray.400">Create your account to discover amazing events</Text>
+              <Text color="gray.600">Create your account to discover amazing events</Text>
             </Box>
 
             <form onSubmit={handleSubmit}>
@@ -147,10 +149,10 @@ const Register = () => {
                     onChange={(e) => handleInputChange('username', e.target.value)}
                     placeholder="Choose a username"
                     size="lg"
-                    bg="whiteAlpha.50"
-                    borderColor="whiteAlpha.200"
-                    _hover={{ borderColor: 'whiteAlpha.300' }}
-                    _focus={{ borderColor: 'blue.500', boxShadow: '0 0 0 1px blue.500' }}
+                    bg="gray.50"
+                    borderColor="gray.200"
+                    _hover={{ borderColor: 'gray.300' }}
+                    _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px var(--chakra-colors-brand-500)' }}
                   />
                   <FormErrorMessage>{errors.username}</FormErrorMessage>
                 </FormControl>
@@ -163,12 +165,15 @@ const Register = () => {
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     placeholder="Enter your email"
                     size="lg"
-                    bg="whiteAlpha.50"
-                    borderColor="whiteAlpha.200"
-                    _hover={{ borderColor: 'whiteAlpha.300' }}
-                    _focus={{ borderColor: 'blue.500', boxShadow: '0 0 0 1px blue.500' }}
+                    bg="gray.50"
+                    borderColor="gray.200"
+                    _hover={{ borderColor: 'gray.300' }}
+                    _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px var(--chakra-colors-brand-500)' }}
                   />
                   <FormErrorMessage>{errors.email}</FormErrorMessage>
+                  <Text fontSize="xs" color="gray.600" mt={1}>
+                    Use your Alliance University email (@alliance.edu.in)
+                  </Text>
                 </FormControl>
 
                 <FormControl isInvalid={errors.password}>
@@ -227,10 +232,10 @@ const Register = () => {
                   <Checkbox
                     isChecked={formData.agreeToTerms}
                     onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
-                    colorScheme="blue"
+                    colorScheme="brand"
                   >
                     I agree to the{' '}
-                    <Link color="blue.400" href="/terms" isExternal>
+                    <Link color="brand.600" href="/terms" isExternal>
                       Terms and Conditions
                     </Link>
                   </Checkbox>
@@ -239,7 +244,7 @@ const Register = () => {
 
                 <Button
                   type="submit"
-                  colorScheme="blue"
+                  colorScheme="brand"
                   size="lg"
                   width="full"
                   isLoading={isLoading}
@@ -252,13 +257,13 @@ const Register = () => {
             </form>
 
             <Box textAlign="center" pt={4}>
-              <Text color="gray.400">
+              <Text color="gray.600">
                 Already have an account?{' '}
                 <Link
                   as={RouterLink}
                   to="/login"
-                  color="blue.400"
-                  _hover={{ color: 'blue.300' }}
+                  color="brand.600"
+                  _hover={{ color: 'brand.500' }}
                 >
                   Sign in
                 </Link>

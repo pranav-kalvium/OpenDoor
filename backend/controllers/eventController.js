@@ -141,14 +141,15 @@ exports.createEvent = async (req, res) => {
     if (typeof locationData === 'string') {
       locationData = {
         address: locationData,
-        coordinates: [77.5946, 12.9716] // Default Bangalore coordinates
+        coordinates: [77.7083, 12.7297] // Alliance University, Anekal
       };
     }
 
     const eventData = {
       ...req.body,
       location: locationData,
-      createdBy: req.userId
+      createdBy: req.userId,
+      status: req.user && req.user.role === 'manager' ? 'pending' : 'approved'
     };
 
     // Add image path if file uploaded
@@ -200,8 +201,8 @@ exports.updateEvent = async (req, res) => {
       });
     }
 
-    // Check if user is the creator
-    if (event.createdBy.toString() !== req.userId) {
+    // Check if user is the creator or an admin
+    if (event.createdBy.toString() !== req.userId && req.user?.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to update this event'
@@ -253,8 +254,8 @@ exports.deleteEvent = async (req, res) => {
       });
     }
 
-    // Check if user is the creator
-    if (event.createdBy.toString() !== req.userId) {
+    // Check if user is the creator or an admin
+    if (event.createdBy.toString() !== req.userId && req.user?.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to delete this event'
@@ -367,5 +368,34 @@ exports.searchEvents = async (req, res) => {
       success: false,
       message: 'Internal server error'
     });
+  }
+};
+
+// Admin endpoints for event approval
+exports.approveEvent = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ success: false, message: 'Event not found' });
+    
+    event.status = 'approved';
+    await event.save();
+    res.json({ success: true, message: 'Event approved', data: event });
+  } catch (error) {
+    console.error('Approve event error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+exports.rejectEvent = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ success: false, message: 'Event not found' });
+    
+    event.status = 'cancelled'; // Or 'rejected', depending on what Event enum has. Current enum includes 'cancelled'
+    await event.save();
+    res.json({ success: true, message: 'Event rejected', data: event });
+  } catch (error) {
+    console.error('Reject event error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 };
