@@ -12,7 +12,7 @@ const api = axios.create({
   },
 });
 
-// ⚙️ Request Interceptor — attach token if present
+// ⚙️ Request Interceptor — attach token if presents
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
