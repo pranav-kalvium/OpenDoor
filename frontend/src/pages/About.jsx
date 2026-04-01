@@ -15,34 +15,34 @@ import {
   Button,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { FaCalendar, FaMap, FaUsers, FaHeart } from 'react-icons/fa';
+import { FiCalendar, FiMap, FiUsers, FiHeart } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
 
 const About = () => {
-  const cardBg = useColorModeValue('whiteAlpha.200', 'whiteAlpha.100');
-  const textColor = useColorModeValue('gray.600', 'gray.400');
+  const cardBg = 'white';
+  const textColor = 'gray.600';
 
   const features = [
     {
-      icon: FaCalendar,
+      icon: FiCalendar,
       title: 'Event Discovery',
-      description: 'Find the best events happening around NYU and New York City',
+      description: 'Find the best events happening around Alliance University and Bangalore',
     },
     {
-      icon: FaMap,
+      icon: FiMap,
       title: 'Interactive Map',
       description: 'See event locations on an interactive map with detailed information',
     },
     {
-      icon: FaUsers,
+      icon: FiUsers,
       title: 'Community',
       description: 'Connect with other students and event organizers',
     },
     {
-      icon: FaHeart,
+      icon: FiHeart,
       title: 'Personalized',
       description: 'Save events you love and get recommendations based on your interests',
     },
@@ -60,7 +60,7 @@ const About = () => {
       avatar: 'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=150&h=150&fit=crop&crop=face',
     },
     {
-      name: 'NYU Community',
+      name: 'Alliance Community',
       role: 'Contributors',
       avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&h=150&fit=crop&crop=face',
     },
@@ -78,13 +78,13 @@ const About = () => {
           <Heading
             size="2xl"
             mb={4}
-            bgGradient="linear(to-r, blue.400, purple.500)"
+            bgGradient="linear(to-r, brand.500, brand.400)"
             bgClip="text"
           >
             About OpenDoor
           </Heading>
           <Text fontSize="xl" color={textColor} maxW="2xl" mx="auto">
-            Connecting NYU students with the best events happening on campus and around New York City
+            Connecting Alliance University students with the best events happening on campus and around Bangalore
           </Text>
         </MotionBox>
       </VStack>
@@ -101,9 +101,9 @@ const About = () => {
               Our Mission
             </Heading>
             <Text fontSize="lg" color={textColor} mb={4}>
-              OpenDoor was created to solve the problem of event discovery for NYU students. 
+              OpenDoor was created to solve the problem of event discovery for Alliance University students. 
               We believe that college is about more than just classes - it's about experiences, 
-              connections, and making the most of your time in one of the world's most vibrant cities.
+              connections, and making the most of your time at one of India's leading universities.
             </Text>
             <Text fontSize="lg" color={textColor}>
               Our platform brings together events from across the university and the city, 
@@ -118,18 +118,17 @@ const About = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
           >
             <Box
-              bg="whiteAlpha.100"
+              bg="gray.50"
               p={8}
               borderRadius="lg"
-              backdropFilter="blur(10px)"
             >
               <VStack spacing={4}>
-                <Icon as={FaHeart} w={12} h={12} color="blue.400" />
+                <Icon as={FiHeart} w={12} h={12} color="brand.500" />
                 <Heading size="lg">Join Our Community</Heading>
                 <Text textAlign="center" color={textColor}>
-                  Thousands of NYU students are already using OpenDoor to discover and attend amazing events
+                  Thousands of Alliance University students are already using OpenDoor to discover and attend amazing events
                 </Text>
-                <Button colorScheme="blue" size="lg" mt={4}>
+                <Button colorScheme="brand" size="lg" mt={4}>
                   Get Started
                 </Button>
               </VStack>
@@ -152,11 +151,11 @@ const About = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               bg={cardBg}
               border="1px solid"
-              borderColor="whiteAlpha.200"
+              borderColor="gray.200"
               _hover={{ transform: 'translateY(-5px)', shadow: 'xl' }}
             >
               <CardBody textAlign="center" p={6}>
-                <Icon as={feature.icon} w={10} h={10} color="blue.400" mb={4} />
+                <Icon as={feature.icon} w={10} h={10} color="brand.500" mb={4} />
                 <Heading size="md" mb={3}>{feature.title}</Heading>
                 <Text color={textColor}>{feature.description}</Text>
               </CardBody>
@@ -186,7 +185,7 @@ const About = () => {
                 mb={4}
                 mx="auto"
                 border="4px solid"
-                borderColor="whiteAlpha.200"
+                borderColor="gray.100"
               />
               <Heading size="md" mb={2}>{member.name}</Heading>
               <Text color={textColor}>{member.role}</Text>
@@ -196,22 +195,22 @@ const About = () => {
       </Box>
 
       {/* Stats Section */}
-      <Box bg="whiteAlpha.100" p={8} borderRadius="lg">
+      <Box bg="gray.50" p={8} borderRadius="lg" border="1px solid" borderColor="gray.200">
         <SimpleGrid columns={{ base: 2, md: 4 }} spacing={6} textAlign="center">
           <Box>
-            <Heading size="2xl" color="blue.400">500+</Heading>
+            <Heading size="2xl" color="brand.500">500+</Heading>
             <Text color={textColor}>Events</Text>
           </Box>
           <Box>
-            <Heading size="2xl" color="green.400">2K+</Heading>
+            <Heading size="2xl" color="teal.500">2K+</Heading>
             <Text color={textColor}>Users</Text>
           </Box>
           <Box>
-            <Heading size="2xl" color="purple.400">100+</Heading>
+            <Heading size="2xl" color="green.500">100+</Heading>
             <Text color={textColor}>Organizers</Text>
           </Box>
           <Box>
-            <Heading size="2xl" color="orange.400">24/7</Heading>
+            <Heading size="2xl" color="yellow.600">24/7</Heading>
             <Text color={textColor}>Available</Text>
           </Box>
         </SimpleGrid>

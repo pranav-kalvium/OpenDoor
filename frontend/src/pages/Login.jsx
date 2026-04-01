@@ -90,18 +90,19 @@ const Login = () => {
         transition={{ duration: 0.5 }}
       >
         <Box
-          bg="whiteAlpha.100"
+          bg="white"
           p={8}
           borderRadius="lg"
           boxShadow="xl"
-          backdropFilter="blur(10px)"
+          border="1px solid"
+          borderColor="gray.100"
         >
           <VStack spacing={6} align="stretch">
             <Box textAlign="center">
-              <Heading size="xl" mb={2} bgGradient="linear(to-r, blue.400, purple.500)" bgClip="text">
+              <Heading size="xl" mb={2} bgGradient="linear(to-r, brand.500, brand.400)" bgClip="text">
                 Welcome Back
               </Heading>
-              <Text color="gray.400">Sign in to your OpenDoor account</Text>
+              <Text color="gray.600">Sign in to your OpenDoor account</Text>
             </Box>
 
             <form onSubmit={handleSubmit}>
@@ -114,10 +115,10 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
                     size="lg"
-                    bg="whiteAlpha.50"
-                    borderColor="whiteAlpha.200"
-                    _hover={{ borderColor: 'whiteAlpha.300' }}
-                    _focus={{ borderColor: 'blue.500', boxShadow: '0 0 0 1px blue.500' }}
+                    bg="gray.50"
+                    borderColor="gray.200"
+                    _hover={{ borderColor: 'gray.300' }}
+                    _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px var(--chakra-colors-brand-500)' }}
                   />
                   <FormErrorMessage>{errors.email}</FormErrorMessage>
                 </FormControl>
@@ -152,9 +153,9 @@ const Login = () => {
                   <Link
                     as={RouterLink}
                     to="/forgot-password"
-                    color="blue.400"
+                    color="brand.600"
                     fontSize="sm"
-                    _hover={{ color: 'blue.300' }}
+                    _hover={{ color: 'brand.500' }}
                   >
                     Forgot password?
                   </Link>
@@ -162,7 +163,7 @@ const Login = () => {
 
                 <Button
                   type="submit"
-                  colorScheme="blue"
+                  colorScheme="brand"
                   size="lg"
                   width="full"
                   isLoading={isLoading}
@@ -175,13 +176,13 @@ const Login = () => {
             </form>
 
             <Box textAlign="center" pt={4}>
-              <Text color="gray.400">
+              <Text color="gray.600">
                 Don't have an account?{' '}
                 <Link
                   as={RouterLink}
                   to="/register"
-                  color="blue.400"
-                  _hover={{ color: 'blue.300' }}
+                  color="brand.600"
+                  _hover={{ color: 'brand.500' }}
                 >
                   Sign up
                 </Link>
@@ -191,15 +192,15 @@ const Login = () => {
         </Box>
 
         {/* Demo Accounts */}
-        <Box mt={8} p={6} bg="whiteAlpha.50" borderRadius="lg">
-          <Heading size="md" mb={4} textAlign="center">
+        <Box mt={8} p={6} bg="white" border="1px solid" borderColor="gray.200" borderRadius="lg">
+          <Heading size="md" mb={4} textAlign="center" color="gray.800">
             Demo Accounts
           </Heading>
           <VStack spacing={2} align="stretch">
-            <Text fontSize="sm" color="gray.400">
+            <Text fontSize="sm" color="gray.600">
               <strong>Email:</strong> demo@opendoor.com • <strong>Password:</strong> demo123
             </Text>
-            <Text fontSize="sm" color="gray.400">
+            <Text fontSize="sm" color="gray.600">
               <strong>Email:</strong> admin@opendoor.com • <strong>Password:</strong> admin123
             </Text>
           </VStack>

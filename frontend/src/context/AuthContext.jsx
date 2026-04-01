@@ -27,28 +27,10 @@ const authReducer = (state, action) => {
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     user: null,
-    loading: true,  // Add loading state
+    isAuthenticated: false,
+    loading: true,
     error: null
   });
-
-  useEffect(() => {
-    // Add this check on initial load
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    
-    if (token && user) {
-      try {
-        dispatch({ 
-          type: 'LOGIN_SUCCESS', 
-          payload: JSON.parse(user) 
-        });
-      } catch (err) {
-        dispatch({ type: 'LOGIN_FAILURE' });
-      }
-    } else {
-      dispatch({ type: 'LOGIN_FAILURE' });
-    }
-  }, []);
   const toast = useToast();
 
   useEffect(() => {
@@ -63,9 +45,13 @@ const AuthProvider = ({ children }) => {
       } catch (err) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        dispatch({ type: 'LOGIN_FAILURE' });
       }
+    } else {
+      dispatch({ type: 'LOGIN_FAILURE' });
     }
   }, []);
+
 
   const login = async (email, password) => {
     dispatch({ type: 'LOGIN_START' });
@@ -110,17 +96,10 @@ const AuthProvider = ({ children }) => {
       const response = await authAPI.register(userData);
       
       if (response.success) {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
-        dispatch({ type: 'LOGIN_SUCCESS', payload: response.user });
+        // Do not auto-login, require email verification
+        dispatch({ type: 'CLEAR_ERROR' });
         
-        toast({
-          title: 'Registration successful',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-        return { success: true };
+        return { success: true, message: response.message };
       } else {
         throw new Error(response.message || 'Registration failed');
       }
@@ -180,11 +159,6 @@ export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
-  }
-  
-  // Add loading check
-  if (context.loading) {
-    return { loading: true };
   }
   
   return context;

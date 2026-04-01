@@ -141,6 +141,10 @@ const useEvents = (initialFilters = {}) => {
     fetchEvents(pagination.page, pagination.limit, filters);
   }, [fetchEvents, pagination.page, pagination.limit, filters]);
 
+  const changePage = useCallback((newPage) => {
+    fetchEvents(newPage, pagination.limit, filters);
+  }, [fetchEvents, pagination.limit, filters]);
+
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
@@ -159,7 +163,8 @@ const useEvents = (initialFilters = {}) => {
     applyFilters,
     searchEvents,
     fetchEvents: refreshEvents,
-    refetch: refreshEvents
+    refetch: refreshEvents,
+    changePage
   };
 };
 

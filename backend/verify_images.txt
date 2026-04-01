@@ -1,0 +1,5 @@
+Cultural Fest - Harmony => /uploads/cultural_fest.png
+Career Fair 2024 => /uploads/career_fair.png
+Tech Symposium 2024 => /uploads/tech_symposium.png
+Cricket Tournament => /uploads/cricket_tournament.png
+Startup Networking Night => /uploads/startup_networking.png

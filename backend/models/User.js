@@ -22,6 +22,11 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters long']
   },
+  role: {
+    type: String,
+    enum: ['student', 'manager', 'admin'],
+    default: 'student'
+  },
   savedEvents: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Event'
@@ -31,8 +36,17 @@ const userSchema = new mongoose.Schema({
     lastName: String,
     avatar: String,
     bio: String,
-    interests: [String]
-  }
+    course: String,
+    semester: String,
+    interests: [String],
+    skills: [String],
+    github: String,
+    linkedin: String
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
+  emailVerified: { type: Boolean, default: false },
+  verificationToken: String
 }, {
   timestamps: true
 });

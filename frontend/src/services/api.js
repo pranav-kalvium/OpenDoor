@@ -58,6 +58,14 @@ export const authAPI = {
 
   getProfile: () =>
     api.get('/auth/profile').then((res) => res.data),
+
+  updateProfile: (data) =>
+    api.put('/auth/profile', data).then((res) => res.data),
+  changePassword: (data) => 
+    api.put('/auth/change-password', data).then((res) => res.data),
+  forgotPassword: (data) => api.post('/auth/forgot-password', data).then(r => r.data),
+  resetPassword: (token, data) => api.put(`/auth/reset-password/${token}`, data).then(r => r.data),
+  verifyEmail: (token) => api.get(`/auth/verify/${token}`).then(r => r.data),
 };
 
 // 🎟️ Events API
@@ -99,6 +107,54 @@ export const eventsAPI = {
 
   unsaveEvent: (eventId) =>
     api.delete(`/events/${eventId}/save`).then((res) => res.data),
+};
+
+// 📋 Registrations API
+export const registrationsAPI = {
+  register: (eventId) =>
+    api.post(`/registrations/${eventId}`).then((res) => res.data),
+
+  unregister: (eventId) =>
+    api.delete(`/registrations/${eventId}`).then((res) => res.data),
+
+  checkRegistration: (eventId) =>
+    api.get(`/registrations/check/${eventId}`).then((res) => res.data),
+
+  getMyRegistrations: () =>
+    api.get('/registrations/my').then((res) => res.data),
+
+  getEventAttendees: (eventId) =>
+    api.get(`/registrations/event/${eventId}`).then((res) => res.data),
+};
+
+export const categoryAPI = {
+  getAll: async () => {
+    const res = await api.get('/categories');
+    return res.data;
+  },
+  create: async (data) => {
+    const res = await api.post('/categories', data);
+    return res.data;
+  },
+  update: async (id, data) => {
+    const res = await api.put(`/categories/${id}`, data);
+    return res.data;
+  },
+  delete: async (id) => {
+    const res = await api.delete(`/categories/${id}`);
+    return res.data;
+  }
+};
+
+export const adminAPI = {
+  approveEvent: async (id) => {
+    const res = await api.put(`/events/${id}/approve`);
+    return res.data;
+  },
+  rejectEvent: async (id) => {
+    const res = await api.put(`/events/${id}/reject`);
+    return res.data;
+  }
 };
 
 export default api;

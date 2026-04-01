@@ -10,9 +10,12 @@ const {
   deleteEvent,
   saveEvent,
   unsaveEvent,
-  searchEvents
+  searchEvents,
+  approveEvent,
+  rejectEvent
 } = require('../controllers/eventController');
 const authMiddleware = require('../middleware/authMiddleware');
+const { requireRole } = require('../middleware/roleMiddleware');
 
 const router = express.Router();
 
@@ -58,9 +61,11 @@ const eventValidation = [
 router.get('/', getEvents);
 router.get('/search', searchEvents);
 router.get('/:id', getEventById);
-router.post('/', authMiddleware, upload.single('image'), eventValidation, createEvent);
-router.put('/:id', authMiddleware, upload.single('image'), eventValidation, updateEvent);
-router.delete('/:id', authMiddleware, deleteEvent);
+router.post('/', authMiddleware, requireRole('manager', 'admin'), upload.single('image'), eventValidation, createEvent);
+router.put('/:id', authMiddleware, requireRole('manager', 'admin'), upload.single('image'), eventValidation, updateEvent);
+router.delete('/:id', authMiddleware, requireRole('manager', 'admin'), deleteEvent);
+router.put('/:id/approve', authMiddleware, requireRole('admin'), approveEvent);
+router.put('/:id/reject', authMiddleware, requireRole('admin'), rejectEvent);
 router.post('/:id/save', authMiddleware, saveEvent);
 router.delete('/:id/save', authMiddleware, unsaveEvent);
 

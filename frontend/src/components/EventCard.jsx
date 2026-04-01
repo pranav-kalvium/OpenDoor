@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -21,24 +21,102 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  useColorModeValue,
+  Tooltip,
+  Icon
 } from '@chakra-ui/react';
-import { FaHeart, FaRegHeart, FaMapMarkerAlt, FaCalendarAlt, FaClock } from 'react-icons/fa';
-import { eventsAPI } from '../services/api';
+import { FiHeart, FiCalendar, FiClock, FiEdit2, FiTrash2, FiMapPin } from 'react-icons/fi';
+import { eventsAPI, registrationsAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 
 const MotionCard = motion(Card);
 
+// Resolve image URL: if it starts with /uploads, prepend the backend base
+const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
+const resolveImageUrl = (url) => {
+  if (!url) return null;
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('/uploads')) return `${API_BASE}${url}`;
+  return url;
+};
+
 const EventCard = ({ event, onEventUpdate }) => {
   const [isSaved, setIsSaved] = useState(event.isSaved || false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [regLoading, setRegLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const toast = useToast();
 
+  // Check registration status when modal opens
+  useEffect(() => {
+    const checkReg = async () => {
+      if (isOpen && isAuthenticated && event._id) {
+        try {
+          const res = await registrationsAPI.checkRegistration(event._id);
+          setIsRegistered(res.isRegistered);
+        } catch (err) {
+          // silently fail
+        }
+      }
+    };
+    checkReg();
+  }, [isOpen, isAuthenticated, event._id]);
 
+  const handleRegister = async () => {
+    if (!isAuthenticated) {
+      toast({ title: 'Please login to register', status: 'warning', duration: 3000 });
+      return;
+    }
+    setRegLoading(true);
+    try {
+      if (isRegistered) {
+        await registrationsAPI.unregister(event._id);
+        setIsRegistered(false);
+        toast({ title: 'Unregistered successfully', status: 'info', duration: 3000 });
+      } else {
+        await registrationsAPI.register(event._id);
+        setIsRegistered(true);
+        toast({ title: 'Registered successfully!', status: 'success', duration: 3000 });
+      }
+    } catch (err) {
+      toast({
+        title: isRegistered ? 'Failed to unregister' : 'Failed to register',
+        description: err.response?.data?.message || 'Something went wrong',
+        status: 'error',
+        duration: 3000,
+      });
+    } finally {
+      setRegLoading(false);
+    }
+  };
 
-  const handleSaveEvent = async () => {
+  const handleDeleteEvent = async (e) => {
+    e.stopPropagation(); // prevent opening modal
+    if (!window.confirm("Are you sure you want to delete this event? This action cannot be undone.")) return;
+    
+    setIsDeleting(true);
+    try {
+      await eventsAPI.delete(event._id);
+      toast({ title: 'Event deleted successfully', status: 'success', duration: 3000 });
+      if (onEventUpdate) onEventUpdate();
+    } catch (err) {
+      toast({
+        title: 'Error deleting event',
+        description: err.response?.data?.message || 'Failed to delete event',
+        status: 'error',
+        duration: 3000,
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleSaveEvent = async (e) => {
+    e.stopPropagation();
     if (!isAuthenticated) {
       toast({
         title: 'Authentication required',
@@ -111,97 +189,189 @@ const EventCard = ({ event, onEventUpdate }) => {
         maxW="md"
         mx="auto"
         overflow="hidden"
-        variant="outline"
-        bg="whiteAlpha.200" 
-        backdropFilter="blur(10px)"
-        border="1px solid"
-        borderColor="whiteAlpha.300" 
-        whileHover={{ y: -5, transition: { duration: 0.2 } }}
-        transition="all 0.3s"
+        variant="elevated"
+        className="glass-card"
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        bg="#FFFFFF"
+        borderColor="gray.100"
+        borderRadius="2xl"
+        position="relative"
+        _hover={{
+          boxShadow: 'xl',
+          borderColor: 'gray.200',
+          transform: 'translateY(-4px)',
+        }}
+        transition="all 0.3s ease"
       >
-        <CardHeader p={4}>
-          <Flex justify="space-between" align="center">
-            <Badge colorScheme="purple" px={2} py={1} borderRadius="full" color="white">
+        <Box position="relative" height="220px" overflow="hidden">
+          {resolveImageUrl(event.image) ? (
+            <Image
+              src={resolveImageUrl(event.image)}
+              alt={event.title}
+              width="100%"
+              height="100%"
+              objectFit="cover"
+              transition="transform 0.5s ease"
+              _hover={{ transform: 'scale(1.05)' }}
+            />
+          ) : (
+            <Box width="100%" height="100%" bg="gray.100" display="flex" alignItems="center" justifyContent="center">
+              <Text color="gray.400">No Image Available</Text>
+            </Box>
+          )}
+
+          {/* Top Gradient Overlay for badges */}
+          <Box
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            height="80px"
+            bgGradient="linear(to-b, rgba(0,0,0,0.8), transparent)"
+            pointerEvents="none"
+          />
+
+          <Flex
+            position="absolute"
+            top={3}
+            left={3}
+            right={3}
+            justify="space-between"
+            align="flex-start"
+          >
+            <Badge
+              colorScheme="green"
+              px={3}
+              py={1}
+              borderRadius="full"
+              fontWeight="bold"
+              bg="rgba(16, 185, 129, 0.9)"
+              color="white"
+              backdropFilter="blur(4px)"
+              textTransform="uppercase"
+              letterSpacing="wider"
+              fontSize="xs"
+            >
               {event.category || 'Event'}
             </Badge>
+
             <IconButton
-              icon={isSaved ? <FaHeart /> : <FaRegHeart />}
+              icon={<Icon as={FiHeart} fill={isSaved ? "currentColor" : "transparent"} />}
               colorScheme={isSaved ? 'pink' : 'gray'}
+              bg={isSaved ? 'white' : 'rgba(255,255,255,0.8)'}
+              color={isSaved ? 'pink.500' : 'gray.600'}
               aria-label={isSaved ? 'Unsave event' : 'Save event'}
               isLoading={isLoading}
               onClick={handleSaveEvent}
-              variant="ghost"
               isRound
-              color="whiteAlpha.900"
+              size="sm"
+              backdropFilter="blur(4px)"
+              _hover={{ bg: 'white', transform: 'scale(1.1)', color: 'pink.500' }}
+              transition="all 0.2s"
             />
           </Flex>
-          <Heading size="md" mt={2} noOfLines={1} color="whiteAlpha.900">
+        </Box>
+
+        <CardBody pt={4} px={5} pb={2}>
+          <Heading 
+            size="md" 
+            mb={2} 
+            noOfLines={1} 
+            color="gray.800"
+            fontWeight="bold"
+            letterSpacing="tight"
+          >
             {event.title}
           </Heading>
-        </CardHeader>
-
-        <CardBody p={4} pt={0}>
-          {event.image && (
-            <Image
-              src={event.image}
-              alt={event.title}
-              borderRadius="lg"
-              height="200px"
-              width="100%"
-              objectFit="cover"
-              mb={4}
-            />
-          )}
           
-          <Text noOfLines={3} mb={4} color="whiteAlpha.800">
+          <Text noOfLines={2} mb={5} color="gray.500" fontSize="sm" lineHeight="tall">
             {event.description}
           </Text>
 
-          <Flex direction="column" gap={2}>
-            <Flex align="center">
-              <FaCalendarAlt color="#CBD5E0" />
-              <Text ml={2} fontSize="sm" color="whiteAlpha.700">
-                {formatDate(event.date)}
+          <Flex direction="column" gap={3}>
+            <Flex align="center" color="brand.500">
+              <Icon as={FiCalendar} boxSize={4} />
+              <Text ml={3} fontSize="sm" fontWeight="medium" color="gray.600">
+                {formatDate(event.date || event.start_time)}
               </Text>
             </Flex>
             
-            <Flex align="center">
-              <FaClock color="#CBD5E0" />
-              <Text ml={2} fontSize="sm" color="whiteAlpha.700">
-                {formatTime(event.date)}
+            <Flex align="center" color="brand.500">
+              <Icon as={FiClock} boxSize={4} />
+              <Text ml={3} fontSize="sm" fontWeight="medium" color="gray.600">
+                {formatTime(event.date || event.start_time)}
               </Text>
             </Flex>
             
-            <Flex align="center">
-              <FaMapMarkerAlt color="#CBD5E0" />
-              <Text ml={2} fontSize="sm" color="whiteAlpha.700" noOfLines={1}>
+            <Flex align="center" color="brand.500">
+              <Icon as={FiMapPin} boxSize={4} />
+              <Text ml={3} fontSize="sm" fontWeight="medium" color="gray.600" noOfLines={1}>
                 {typeof event.location === 'object' ? event.location.address : event.location}
               </Text>
             </Flex>
           </Flex>
         </CardBody>
 
-        <CardFooter p={4} pt={0}>
+        <CardFooter pt={3} px={5} pb={5} display="flex" justifyContent="space-between" alignItems="center" gap={3}>
           <Button
-            variant="solid"
-            colorScheme="blue"
-            width="full"
+            variant="outline"
+            color="gray.800"
+            bg="white"
+            borderColor="gray.200"
+            flex="1"
             onClick={onOpen}
+            _hover={{
+              bg: 'brand.500',
+              color: 'white',
+              borderColor: 'brand.500',
+              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+            }}
+            transition="all 0.3s"
           >
             View Details
           </Button>
+          
+          {(user?.role === 'admin' || user?.role === 'manager') && (
+            <Flex gap={2}>
+              <Tooltip label="Edit Event" bg="gray.800" color="white" placement="top" borderRadius="md">
+                <IconButton
+                  as="a"
+                  href={`/events/${event._id}/edit`}
+                  icon={<Icon as={FiEdit2} />}
+                  size="md"
+                  variant="outline"
+                  colorScheme="gray"
+                  borderColor="gray.200"
+                  _hover={{ bg: 'brand.500', color: 'white', borderColor: 'brand.500' }}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </Tooltip>
+              <Tooltip label="Delete Event" bg="red.600" color="white" placement="top" borderRadius="md">
+                <IconButton
+                  icon={<Icon as={FiTrash2} />}
+                  size="md"
+                  variant="outline"
+                  colorScheme="gray"
+                  borderColor="gray.200"
+                  _hover={{ bg: 'red.500', color: 'white', borderColor: 'red.500' }}
+                  onClick={handleDeleteEvent}
+                  isLoading={isDeleting}
+                />
+              </Tooltip>
+            </Flex>
+          )}
         </CardFooter>
       </MotionCard>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+      <Modal isOpen={isOpen} onClose={onClose} size="xl" motionPreset="scale">
         <ModalOverlay />
-        <ModalContent bg="gray.800" color="white">
+        <ModalContent bg="white" color="gray.800">
           <ModalHeader>{event.title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {event.image && (
+            {resolveImageUrl(event.image) && (
               <Image
-                src={event.image}
+                src={resolveImageUrl(event.image)}
                 alt={event.title}
                 borderRadius="lg"
                 width="100%"
@@ -215,19 +385,19 @@ const EventCard = ({ event, onEventUpdate }) => {
             
             <Flex direction="column" gap={3} mb={4}>
               <Flex align="center">
-                <FaCalendarAlt />
+                <Icon as={FiCalendar} />
                 <Text ml={2} fontWeight="medium">Date:</Text>
-                <Text ml={2}>{formatDate(event.date)}</Text>
+                <Text ml={2}>{formatDate(event.date || event.start_time)}</Text>
               </Flex>
               
               <Flex align="center">
-                <FaClock />
+                <Icon as={FiClock} />
                 <Text ml={2} fontWeight="medium">Time:</Text>
-                <Text ml={2}>{formatTime(event.date)}</Text>
+                <Text ml={2}>{formatTime(event.date || event.start_time)}</Text>
               </Flex>
               
               <Flex align="center">
-                <FaMapMarkerAlt />
+                <Icon as={FiMapPin} />
                 <Text ml={2} fontWeight="medium">Location:</Text>
                 <Text ml={2}>
                    {typeof event.location === 'object' ? event.location.address : event.location}
@@ -237,7 +407,7 @@ const EventCard = ({ event, onEventUpdate }) => {
               {event.website && (
                 <Flex align="center">
                   <Text fontWeight="medium">Website:</Text>
-                  <Text ml={2} color="blue.400" as="a" href={event.website} target="_blank" rel="noopener noreferrer">
+                  <Text ml={2} color="brand.500" as="a" href={event.website} target="_blank" rel="noopener noreferrer">
                     {event.website}
                   </Text>
                 </Flex>
@@ -256,18 +426,11 @@ const EventCard = ({ event, onEventUpdate }) => {
               Close
             </Button>
             <Button
-              colorScheme="blue"
-              onClick={() => {
-                toast({
-                  title: 'Registration',
-                  description: 'Registration feature coming soon!',
-                  status: 'info',
-                  duration: 3000,
-                  isClosable: true,
-                });
-              }}
+              colorScheme={isRegistered ? 'red' : 'brand'}
+              onClick={handleRegister}
+              isLoading={regLoading}
             >
-              Register
+              {isRegistered ? 'Unregister' : 'Register'}
             </Button>
           </ModalFooter>
         </ModalContent>

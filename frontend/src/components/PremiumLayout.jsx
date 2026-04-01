@@ -1,15 +1,18 @@
 import React from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import PremiumNavbar from './PremiumNavbar';
+import Footer from './Footer';
 
 const PremiumLayout = ({ children }) => {
   return (
     <Box
       minH="100vh"
-      bg="linear-gradient(135deg, #0f0f23 0%, #1a202c 100%)"
+      bg="#F0FDF4"
       backgroundAttachment="fixed"
       position="relative"
       overflow="hidden"
+      display="flex"
+      flexDirection="column"
       _before={{
         content: '""',
         position: 'absolute',
@@ -18,11 +21,12 @@ const PremiumLayout = ({ children }) => {
         right: 0,
         bottom: 0,
         background: `
-          radial-gradient(circle at 15% 50%, rgba(29, 78, 216, 0.15) 0%, transparent 50%),
-          radial-gradient(circle at 85% 30%, rgba(245, 101, 101, 0.1) 0%, transparent 50%),
-          radial-gradient(circle at 50% 80%, rgba(214, 158, 46, 0.1) 0%, transparent 50%)
+          radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+          radial-gradient(circle at 85% 30%, rgba(52, 211, 153, 0.05) 0%, transparent 50%),
+          radial-gradient(circle at 50% 80%, rgba(5, 150, 105, 0.03) 0%, transparent 50%)
         `,
         pointerEvents: 'none',
+        zIndex: 0
       }}
     >
       <PremiumNavbar />
@@ -30,12 +34,15 @@ const PremiumLayout = ({ children }) => {
         as="main"
         direction="column"
         pt="80px"
-        minH="calc(100vh - 80px)"
+        flex="1"
         position="relative"
         zIndex={1}
       >
         {children}
       </Flex>
+      <Box position="relative" zIndex={1} mt="auto">
+        <Footer />
+      </Box>
     </Box>
   );
 };
