@@ -23,7 +23,8 @@ const eventSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: [true, 'Event category is required']
+    required: [true, 'Event category is required'],
+    enum: ['academic', 'social', 'cultural', 'sports', 'career', 'other']
   },
   image: {
     type: String,
@@ -41,27 +42,6 @@ const eventSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  },
-  start_time: {
-    type: Date,
-    default: null
-  },
-  end_time: {
-    type: Date,
-    default: null
-  },
-  registration_deadline: {
-    type: Date,
-    default: null
-  },
-  max_attendees: {
-    type: Number,
-    default: null
-  },
-  status: {
-    type: String,
-    enum: ['pending', 'approved', 'cancelled'],
-    default: 'approved'
   },
   attendees: [{
     type: mongoose.Schema.Types.ObjectId,

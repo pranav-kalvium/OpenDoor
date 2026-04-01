@@ -1,16 +1,12 @@
-const dotenv = require('dotenv');
-dotenv.config();
-
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
 const path = require('path');
-const fs = require('fs');
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const eventRoutes = require('./routes/eventRoutes');
-const registrationRoutes = require('./routes/registrationRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
 
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,19 +14,15 @@ const PORT = process.env.PORT || 5000;
 
 connectDB();
 
-// Auto-create uploads directory
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173', 'http://localhost:5174', 'https://opendooor.netlify.app' ];
 
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:5173',
-  'http://localhost:5174',
-  'https://opendooor.netlify.app'
-];
+
+
+
 
 app.use(cors({
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: [process.env.FRONTEND_URL], 
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -42,8 +34,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
-app.use('/api/registrations', registrationRoutes);
-app.use('/api/categories', categoryRoutes);
 
 
 app.get('/api/health', (req, res) => {
