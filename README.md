@@ -1,4 +1,4 @@
-# 🎓 OpenDoor — Premium University Event Discovery & Management Platform
+# 🎓 OpenDoor - Premium University Event Discovery & Management Platform
 
 <div align="center">
 
