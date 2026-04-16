@@ -1,8 +1,5 @@
-<<<<<<< HEAD
+
 # 🎓 OpenDoor - Premium University Event Discovery & Management Platform
-=======
-# 🚪 OpenDoor – Alliance University Event Discovery Platform 🎓
->>>>>>> update-readme
 
 > **Discover. Save. Attend.** – OpenDoor is a premium event discovery platform built exclusively for **Alliance University Bangalore** students to explore academic, cultural, sports, and career events happening across campus and the city.
 
