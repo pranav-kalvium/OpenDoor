@@ -17,7 +17,6 @@
 ## 📖 Table of Contents
 
 - [Overview](#-overview)
-- [Screenshots](#️-screenshots)
 - [Real-Life Use Cases](#-real-life-use-cases)
 - [High-Level Design](#-high-level-design)
 - [Folder Structure](#-folder-structure)
@@ -64,31 +63,7 @@ OpenDoor provides:
 
 ---
 
-## 🖼️ Screenshots
 
-### Interactive Campus Map
-![Map View](screenshots/map.png)
-*Explore events geographically with interactive pins categorized by event type.*
-
-
-
-
-### Student Profile & Dashboard
-![Profile Dashboard](screenshots/profile.png)
-*A personalized hub to track saved events, past registrations, and edit profile settings.*
-
-
-
-
-### Event Creation Studio
-![Create Event](screenshots/create_event.png)
-*A frictionless form for organizers to draft detailed events with promotional banners and schedules.*
-
-### Administrative Panel
-![Admin Dashboard](screenshots/admin.png)
-*Full administrative moderation to review pending events and export student attendee CSVs.*
-
----
 
 ## 💡 Real-Life Use Cases
 
